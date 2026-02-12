@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #define MAX_LINE_LENGTH 256
 #define INITIAL_CAPACITY 100
@@ -64,7 +65,7 @@ int read_lines(const char *filename, char ***lines, int *count) {
 
 // Fisher-Yates shuffle to randomize the array
 void shuffle(char **array, int n) {
-    for (int i = n - 1; i >= 1; i--) {
+    for (int i = n - 1; i > 0; i--) {
         int j = rand() % (i + 1);
         // Swap elements at i and j
         char *temp = array[i];
@@ -140,8 +141,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Seed random number generator with better entropy
-    unsigned int seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
-    srand(seed);
+    srand(time(NULL) ^ getpid());
 
     // Debug: print all loaded participants
     #ifdef DEBUG
