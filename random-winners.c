@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #define MAX_LINE_LENGTH 256
 #define INITIAL_CAPACITY 100
@@ -24,7 +25,7 @@ int read_lines(const char *filename, char ***lines, int *count) {
     char buffer[MAX_LINE_LENGTH];
 
     while (fgets(buffer, MAX_LINE_LENGTH, file)) {
-        // Remove trailing newline and carriage return (handles both Unix \n and Windows \r\n)
+        // Remove trailing newline and carriage return
         size_t len = strlen(buffer);
         while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
             buffer[len - 1] = '\0';
@@ -63,8 +64,9 @@ int read_lines(const char *filename, char ***lines, int *count) {
 
 // Fisher-Yates shuffle to randomize the array
 void shuffle(char **array, int n) {
-    for (int i = n - 1; i > 0; i--) {
+    for (int i = n - 1; i >= 1; i--) {
         int j = rand() % (i + 1);
+        // Swap elements at i and j
         char *temp = array[i];
         array[i] = array[j];
         array[j] = temp;
@@ -137,8 +139,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Seed random number generator
-    srand((unsigned int)time(NULL));
+    // Seed random number generator with better entropy
+    unsigned int seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
+    srand(seed);
+
+    // Debug: print all loaded participants
+    #ifdef DEBUG
+    printf("DEBUG: Loaded %d participants:\n", line_count);
+    for (int i = 0; i < line_count; i++) {
+        printf("  [%d] '%s'\n", i, lines[i]);
+    }
+    printf("\n");
+    #endif
 
     // Shuffle the array and pick the first num_winners
     shuffle(lines, line_count);
