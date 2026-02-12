@@ -24,9 +24,9 @@ int read_lines(const char *filename, char ***lines, int *count) {
     char buffer[MAX_LINE_LENGTH];
 
     while (fgets(buffer, MAX_LINE_LENGTH, file)) {
-        // Remove newline character
+        // Remove trailing newline and carriage return (handles both Unix \n and Windows \r\n)
         size_t len = strlen(buffer);
-        if (len > 0 && buffer[len - 1] == '\n') {
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
             buffer[len - 1] = '\0';
             len--;
         }
