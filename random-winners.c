@@ -65,9 +65,8 @@ int read_lines(const char *filename, char ***lines, int *count) {
 
 // Fisher-Yates shuffle to randomize the array
 void shuffle(char **array, int n) {
-    for (int i = n - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        // Swap elements at i and j
+    for (int i = 0; i < n - 1; i++) {
+        int j = i + rand() % (n - i);
         char *temp = array[i];
         array[i] = array[j];
         array[j] = temp;
@@ -141,7 +140,19 @@ int main(int argc, char *argv[]) {
     }
 
     // Seed random number generator with better entropy
-    srand(time(NULL) ^ getpid());
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    unsigned int seed = tv.tv_sec ^ tv.tv_usec ^ getpid();
+    srand(seed);
+
+    // Debug: print all loaded participants
+    #ifdef DEBUG
+    printf("DEBUG: Loaded %d participants:\n", line_count);
+    for (int i = 0; i < line_count; i++) {
+        printf("  [%d] '%s'\n", i, lines[i]);
+    }
+    printf("\n");
+    #endif
 
     // Debug: print all loaded participants
     #ifdef DEBUG
