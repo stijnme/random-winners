@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
 #include <sys/time.h>
+#endif
 
 #define MAX_LINE_LENGTH 256
 #define INITIAL_CAPACITY 100
@@ -139,11 +143,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Seed random number generator with better entropy
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    unsigned int seed = tv.tv_sec ^ tv.tv_usec ^ getpid();
-    srand(seed);
+    // Seed random number generator
+    srand(time(NULL));
 
     // Debug: print all loaded participants
     #ifdef DEBUG
